@@ -1,0 +1,71 @@
+docker-machine create default
+docker-machine stop
+docker-machine start
+eval $(docker-machine env)
+docker ps
+docker ps -a
+docker run -d --name webserver -p 8080:80 nginx:latest
+
+docker rm nginx
+docker logs webserver
+docker exec webserver ls
+docker exec webserver ping google.com
+docker exec -it webserver bash
+docker pull php
+docker pull php:5-apache
+docker images
+docker info
+docker ps -q | wc -l
+docker images -q | wc -l
+docker rmi $(docker images -q)
+docker image prune --all
+docker run -d --name php1 -p 8080:80 -v /hosthome/ensinatech/php1:/var/www/html php:5-apache
+docker-machine ssh default
+docker inspect php1
+
+docker build  -t ensinatech/phpinfo:latest -t ensinatech/phpinfo:v1
+
+docker run -d --name php_info -p 8080:80 ensinatech/phpinfo:v1
+
+https://github.com/chapagain/crud-php-simple
+
+docker build -t ensinatech/mysql:latest .
+
+docker run -d --name mysql_db -p 3306:3306 -e  MYSQL_ROOT_PASSWORD=minhasenha -v ~/ensinatech/php1/data:/var/lib/mysql ensinatech/mysql
+
+docker run --name myadmin -d --link mysql_db:db -p 8081:80 phpmyadmin/phpmyadmin
+
+docker build -t ensinatech/phpinfo:latest -t ensinatech/phpinfo:v2 .
+
+docker run -d --name php_info2 -p 8082:80 --link mysql_db:db ensinatech/phpinfo:v2
+
+docker volume ls
+
+docker volume create logs_php_info3 --opt o=size=10gb
+
+docker run -d --name php_info3 -p 8083:80 -v logs_php_info3:/var/log  --link mysql_db:db ensinatech/phpinfo:v2
+
+docker network ls
+
+docker network create -d bridge --gateway "192.168.1.1" --subnet "192.168.1.0/24" --ip-range "192.168.1.0/16" php_info_net
+
+docker network inspect php_info_net
+
+docker run -d --name php_info4 --ip 192.168.1.10 --net php_info_net  -p 8084:80 -v logs_php_info3:/var/log  --link mysql_db:db ensinatech/phpinfo:v2
+
+docker run -d --name pyserver -p 8085:8000 ensinatech/pythonserver
+
+docker swarm init --advertise-addr 192.168.99.100
+
+docker-machine create node1
+docker-machine ssh node1 "docker swarm join --token SWMTKN-1-34x05x2z9gen27hr4dmvndtp6f9p4b6u49wpyp1j8iuj24uml5-200o1oqr0le37bsvdw0uwmblz 192.168.99.100:2377"
+
+docker-machine create node2
+docker-machine ssh node2 "docker swarm join --token SWMTKN-1-34x05x2z9gen27hr4dmvndtp6f9p4b6u49wpyp1j8iuj24uml5-200o1oqr0le37bsvdw0uwmblz 192.168.99.100:2377"
+
+docker-machine create node3
+docker-machine ssh node3 "docker swarm join --token SWMTKN-1-34x05x2z9gen27hr4dmvndtp6f9p4b6u49wpyp1j8iuj24uml5-200o1oqr0le37bsvdw0uwmblz 192.168.99.100:2377"
+
+docker stack deploy -c docker-compose.yml ensinatech-workshop
+
+docker service ls
