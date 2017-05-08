@@ -4,7 +4,9 @@ services:
     image: ensinatech/mysql
     hostname: db
     networks:
-      - phpinfo
+      workshop:
+        aliases:
+          - db
     deploy:
       replicas: 1
       resources:
@@ -25,7 +27,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     networks:
-      - phpinfo
+      - workshop
     deploy:
       replicas: 1
       resources:
@@ -45,7 +47,7 @@ services:
   phpinfo:
     image: ensinatech/phpinfo:v2
     networks:
-      - phpinfo
+      - workshop
     deploy:
       replicas: 3
       resources:
@@ -62,4 +64,4 @@ services:
     ports:
       - 8080:80
 networks:
-  phpinfo:
+  workshop:
