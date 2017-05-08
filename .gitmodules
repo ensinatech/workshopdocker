@@ -1,0 +1,3 @@
+[submodule "phpinfov2/crud-php-simple"]
+	path = phpinfov2/crud-php-simple
+	url = https://github.com/chapagain/crud-php-simple
